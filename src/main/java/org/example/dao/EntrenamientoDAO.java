@@ -1,4 +1,7 @@
-package org.example;
+package org.example.dao;
+
+import org.example.model.Entrenamiento;
+import org.example.util.ConexionBD;
 
 import java.sql.*;
 
@@ -9,7 +12,7 @@ public class EntrenamientoDAO {
         String sql = "INSERT INTO entrenamientos (tipo, duracion, fecha, usuario_id) VALUES (?, ?, ?, ?)";
 
         try {
-            Connection con = ConexionBD.conectar();
+            Connection con = ConexionBD.obtenerConexion();
             PreparedStatement ps = con.prepareStatement(sql);
 
             ps.setString(1, e.getTipo());
@@ -31,7 +34,7 @@ public class EntrenamientoDAO {
         String sql = "SELECT * FROM entrenamientos WHERE usuario_id=?";
 
         try {
-            Connection con = ConexionBD.conectar();
+            Connection con = ConexionBD.obtenerConexion();
             PreparedStatement ps = con.prepareStatement(sql);
 
             ps.setInt(1, id);

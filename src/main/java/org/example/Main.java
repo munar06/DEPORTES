@@ -1,22 +1,45 @@
 package org.example;
 
+import org.example.dao.EntrenamientoDAOImpl;
+import org.example.dao.UsuarioDAOImpl;
+import org.example.model.Entrenamiento;
+import org.example.model.SesionUsuario;
+import org.example.model.Usuario;
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        EntrenamientoDAO entrenamientoDAO = new EntrenamientoDAO();
+        UsuarioDAOImpl usuarioDAO =
+                new UsuarioDAOImpl();
 
-        int op;
+        EntrenamientoDAOImpl entrenamientoDAO =
+                new EntrenamientoDAOImpl();
+
+        int opcion;
 
         do {
 
-            System.out.println("\n=== SISTEMA DEPORTIVO ===");
-            System.out.println("Usuario: " + SesionUsuario.nombre);
+            System.out.println("SISTEMA DEPORTIVO ");
+
+            if (SesionUsuario.getNombre() != null) {
+
+                System.out.println(
+                        "Usuario activo: "
+                                + SesionUsuario.getNombre()
+                );
+
+            } else {
+
+                System.out.println(
+                        "Usuario activo: Ninguno"
+                );
+            }
+
             System.out.println("1. Login");
             System.out.println("2. Registrar usuario");
             System.out.println("3. Ver usuarios");
@@ -24,69 +47,175 @@ public class Main {
             System.out.println("5. Ver mis entrenamientos");
             System.out.println("6. Salir");
 
-            op = Integer.parseInt(sc.nextLine());
+            System.out.print("Seleccione una opcion: ");
 
-            switch (op) {
+            opcion = Integer.parseInt(
+                    scanner.nextLine()
+            );
+
+            switch (opcion) {
 
                 case 1 -> {
+
                     System.out.print("Correo: ");
-                    String c = sc.nextLine();
+                    String correoLogin =
+                            scanner.nextLine();
 
                     System.out.print("Password: ");
-                    String p = sc.nextLine();
+                    String passwordLogin =
+                            scanner.nextLine();
 
-                    if (usuarioDAO.login(c, p)) {
-                        System.out.println("Login OK " + SesionUsuario.nombre);
+                    boolean login =
+                            usuarioDAO.login(
+                                    correoLogin,
+                                    passwordLogin
+                            );
+
+                    if (login) {
+
+                        System.out.println(
+                                "Login correcto. Bienvenido "
+                                        + SesionUsuario.getNombre()
+                        );
+
                     } else {
-                        System.out.println("Error login");
+
+                        System.out.println(
+                                "Correo o password incorrectos"
+                        );
                     }
                 }
 
                 case 2 -> {
+
                     System.out.print("Nombre: ");
-                    String n = sc.nextLine();
+                    String nombre =
+                            scanner.nextLine();
 
                     System.out.print("Correo: ");
-                    String c = sc.nextLine();
+                    String correoRegistro =
+                            scanner.nextLine();
 
-                    System.out.print("Pass: ");
-                    String p = sc.nextLine();
+                    System.out.print("Password: ");
+                    String passwordRegistro =
+                            scanner.nextLine();
 
                     System.out.print("Edad: ");
-                    int e = Integer.parseInt(sc.nextLine());
+                    int edad =
+                            Integer.parseInt(
+                                    scanner.nextLine()
+                            );
 
                     System.out.print("Altura: ");
-                    double a = Double.parseDouble(sc.nextLine());
+                    double altura =
+                            Double.parseDouble(
+                                    scanner.nextLine()
+                            );
 
-                    System.out.print("Peso: ");
-                    double pe = Double.parseDouble(sc.nextLine());
+                    System.out.print("Peso actual: ");
+                    double peso =
+                            Double.parseDouble(
+                                    scanner.nextLine()
+                            );
 
-                    Usuario u = new Usuario(n, c, p, e, a, pe);
+                    Usuario usuario =
+                            new Usuario(
+                                    nombre,
+                                    correoRegistro,
+                                    passwordRegistro,
+                                    edad,
+                                    altura,
+                                    peso
+                            );
 
-                    usuarioDAO.guardarUsuario(u);
+                    usuarioDAO.guardarUsuario(
+                            usuario
+                    );
                 }
 
-                case 3 -> usuarioDAO.mostrarUsuarios();
+                case 3 -> {
+
+                    usuarioDAO.mostrarUsuarios();
+                }
 
                 case 4 -> {
-                    System.out.print("Tipo: ");
-                    String t = sc.nextLine();
 
-                    System.out.print("Duración: ");
-                    int d = Integer.parseInt(sc.nextLine());
+                    if (SesionUsuario.getUsuarioId() == 0) {
 
-                    System.out.print("Fecha: ");
-                    String f = sc.nextLine();
+                        System.out.println(
+                                "Debe iniciar sesion primero"
+                        );
 
-                    Entrenamiento e = new Entrenamiento(t, d, f, SesionUsuario.usuarioId);
+                    } else {
 
-                    entrenamientoDAO.guardar(e);
+                        System.out.print(
+                                "Tipo de entrenamiento: "
+                        );
+
+                        String tipo =
+                                scanner.nextLine();
+
+                        System.out.print(
+                                "Duracion en minutos: "
+                        );
+
+                        int duracion =
+                                Integer.parseInt(
+                                        scanner.nextLine()
+                                );
+
+                        System.out.print("Fecha: ");
+
+                        String fecha =
+                                scanner.nextLine();
+
+                        Entrenamiento entrenamiento =
+                                new Entrenamiento(
+                                        tipo,
+                                        duracion,
+                                        fecha,
+                                        SesionUsuario.getUsuarioId()
+                                );
+
+                        entrenamientoDAO.guardar(
+                                entrenamiento
+                        );
+                    }
                 }
 
-                case 5 -> entrenamientoDAO.mostrarPorUsuario(SesionUsuario.usuarioId);
+                case 5 -> {
 
+                    if (SesionUsuario.getUsuarioId() == 0) {
+
+                        System.out.println(
+                                "Debe iniciar sesion primero"
+                        );
+
+                    } else {
+
+                        entrenamientoDAO.mostrarPorUsuario(
+                                SesionUsuario.getUsuarioId()
+                        );
+                    }
+                }
+
+                case 6 -> {
+
+                    System.out.println(
+                            "Saliendo del sistema..."
+                    );
+                }
+
+                default -> {
+
+                    System.out.println(
+                            "Opcion invalida"
+                    );
+                }
             }
 
-        } while (op != 6);
+        } while (opcion != 6);
+
+        scanner.close();
     }
 }

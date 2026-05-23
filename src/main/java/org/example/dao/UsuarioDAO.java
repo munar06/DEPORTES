@@ -1,4 +1,8 @@
-package org.example;
+package org.example.dao;
+
+import org.example.model.SesionUsuario;
+import org.example.model.Usuario;
+import org.example.util.ConexionBD;
 
 import java.sql.*;
 
@@ -9,7 +13,7 @@ public class UsuarioDAO {
         String sql = "INSERT INTO usuarios (nombre, correo, password, edad, altura, peso_actual) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
-            Connection con = ConexionBD.conectar();
+            Connection con = ConexionBD.obtenerConexion();
             PreparedStatement ps = con.prepareStatement(sql);
 
             ps.setString(1, u.getNombre());
@@ -33,7 +37,7 @@ public class UsuarioDAO {
         String sql = "SELECT * FROM usuarios";
 
         try {
-            Connection con = ConexionBD.conectar();
+            Connection con = ConexionBD.obtenerConexion();
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -51,7 +55,7 @@ public class UsuarioDAO {
         String sql = "SELECT * FROM usuarios WHERE correo=? AND password=?";
 
         try {
-            Connection con = ConexionBD.conectar();
+            Connection con = ConexionBD.obtenerConexion();
             PreparedStatement ps = con.prepareStatement(sql);
 
             ps.setString(1, correo);
@@ -60,8 +64,8 @@ public class UsuarioDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                SesionUsuario.usuarioId = rs.getInt("id");
-                SesionUsuario.nombre = rs.getString("nombre");
+                SesionUsuario.setUsuarioId(rs.getInt("id"));
+                SesionUsuario.setNombre(rs.getString("nombre"));
                 return true;
             }
 
